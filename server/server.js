@@ -13,9 +13,6 @@ app.use(bodyParser.urlencoded({ extended: true }))
 // parse application/json
 app.use(bodyParser.json())
 
-app.get('/', (req, res) => {
-    res.send('It works!');
-});
 
 app.post('/todos', (req, res) => {
     const todo = new Todo({
@@ -26,6 +23,14 @@ app.post('/todos', (req, res) => {
         (err) => {res.status(400).send(err)}
     );
 });
+
+app.get('/todos', (req, res) => {
+    Todo.find().then(
+        (todos) => {res.send({ todos })},    
+        (err) => {res.status(400).send(err)}    
+    );
+});
+
 
 app.listen(process.env.PORT, process.env.IP, () => {
     console.log(`Server started on PORT: ${process.env.PORT}`);
