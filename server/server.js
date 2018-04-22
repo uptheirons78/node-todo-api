@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-
+const { ObjectID } = require("mongodb");
 const { mongoose } = require("./db/mongoose");
 const {Todo} = require('./models/todo');
 const {User} = require('./models/user');
@@ -29,6 +29,21 @@ app.get('/todos', (req, res) => {
         (todos) => {res.send({ todos })},    
         (err) => {res.status(400).send(err)}    
     );
+});
+
+//GET route using Async-Await instead of Promises
+app.get('/todos/:id', async (req, res) => {
+    const id = req.params.id;
+    if(!ObjectID.isValid(id)) {
+        return res.status(400).send('ID IS NOT VALID!');
+    }
+    try {
+        const todo = await Todo.findById(id);
+        res.send({todo});
+    } 
+    catch(err) {
+        (err) => {res.status(400).send(err)} 
+    }
 });
 
 
