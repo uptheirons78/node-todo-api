@@ -26,12 +26,11 @@ app.post('/todos', (req, res) => {
     );
 });
 
-app.get('/todos', (req, res) => {
-    Todo.find().then(
-        (todos) => {res.send({ todos })},    
-        (err) => {res.status(400).send(err)}    
-    );
+app.get('/todos', async (req, res) => {
+    const todos = await Todo.find();
+    res.send({ todos });
 });
+
 
 //GET route using Async-Await instead of Promises
 app.get('/todos/:id', async (req, res) => {
@@ -41,6 +40,21 @@ app.get('/todos/:id', async (req, res) => {
     }
     try {
         const todo = await Todo.findById(id);
+        res.send({todo});
+    } 
+    catch(err) {
+        (err) => {res.status(400).send(err)} 
+    }
+});
+
+//DELETE route using Async-Await instead of Promise
+app.delete('/todos/:id', async (req, res) => {
+    const id = req.params.id;
+    if(!ObjectID.isValid(id)) {
+        return res.status(400).send('ID IS NOT VALID!');
+    }
+    try {
+        const todo = await Todo.findByIdAndRemove(id);
         res.send({todo});
     } 
     catch(err) {
